@@ -332,7 +332,8 @@ class LoadImagesAndLabels(Dataset):  # for training/testing
                             self.img_files]
 
         # Check cache
-        cache_path = f'/kaggle/working/.cache/{Path(self.label_files[0]).parent.name}'  # cached labels
+        cache_path = f'/kaggle/working/cache/{Path(self.label_files[0]).parent.name}'  # cached labels
+        Path.mkdir(cache_path, parents=True, exist_ok=True)
         if os.path.isfile(cache_path):
             cache = torch.load(cache_path)  # load
             if cache['hash'] != get_hash(self.label_files + self.img_files):  # dataset changed
