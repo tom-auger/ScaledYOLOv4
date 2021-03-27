@@ -328,7 +328,13 @@ class LoadImagesAndLabels(Dataset):  # for training/testing
         self.stride = stride
 
         # Define labels
-        self.label_files = [x.replace('images', 'labels_avg').replace(os.path.splitext(x)[-1], '.txt') for x in
+        def get_label_path(img_path):
+            d, f = os.path.split(img_path)
+            return f"{d}/labels_avg/{f}".replace(os.path.splitext(x)[-1], '.txt')
+
+        # self.label_files = [x.replace('images', 'labels_avg').replace(os.path.splitext(x)[-1], '.txt') for x in
+        #                     self.img_files]
+        self.label_files = [get_label_path(x) for x in
                             self.img_files]
 
         # Check cache
