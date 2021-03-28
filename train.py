@@ -398,6 +398,7 @@ if __name__ == '__main__':
     parser.add_argument('--local_rank', type=int, default=-1, help='DDP parameter, do not modify')
     parser.add_argument('--logdir', type=str, default='runs/', help='logging directory')
     parser.add_argument('--labels', type=str, default='labels_all', help='labels to use during training')
+    parser.add_argument('--filterclass', type=int, default=-1, help='Class to filter out')
     parser.add_argument('--onlyclass', type=int, default=-1, help='The only class to train on')
     opt = parser.parse_args()
 
