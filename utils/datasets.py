@@ -58,7 +58,8 @@ def create_dataloader(path, imgsz, batch_size, stride, opt, hyp=None, augment=Fa
                                       single_cls=opt.single_cls,
                                       stride=int(stride),
                                       pad=pad,
-                                      onlyclass=opt.onlyclass)
+                                      onlyclass=opt.onlyclass
+                                      labels=opt.labels)
 
     batch_size = min(batch_size, len(dataset))
     nw = min([os.cpu_count() // world_size, batch_size if batch_size > 1 else 0, 8])  # number of workers
@@ -293,7 +294,7 @@ class LoadStreams:  # multiple IP or RTSP cameras
 
 class LoadImagesAndLabels(Dataset):  # for training/testing
     def __init__(self, path, img_size=640, batch_size=16, augment=False, hyp=None, rect=False, image_weights=False,
-                 cache_images=False, single_cls=False, stride=32, pad=0.0, onlyclass=-1):
+                 cache_images=False, single_cls=False, stride=32, pad=0.0, onlyclass=-1, labels='labels_all'):
         try:
             f = []  # image files
             for p in path if isinstance(path, list) else [path]:
@@ -331,7 +332,7 @@ class LoadImagesAndLabels(Dataset):  # for training/testing
         # Define labels
         def get_label_path(img_path):
             d, f = os.path.split(img_path)
-            x = f"{d}/labels_avg/{f}"
+            x = f"{d}/{labels}/{f}"
             return x.replace(os.path.splitext(x)[-1], '.txt')
 
         # self.label_files = [x.replace('images', 'labels_avg').replace(os.path.splitext(x)[-1], '.txt') for x in
