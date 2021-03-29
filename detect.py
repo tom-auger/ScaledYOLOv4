@@ -114,7 +114,9 @@ def detect(save_img=False):
                             coords = (torch.tensor(xyxy).view(1, 4) / gn).tolist()
                             # with open(txt_path + '.txt', 'a') as f:
                             #     f.write(('%g ' * 5 + '\n') % (cls, *xywh))  # label format
-
+                            print(cls)
+                            print(conf)
+                            print(*coords)
                             f.write(('%g ' * 6) % (cls, conf, *coords))  # label format
 
                         if save_img or view_img:  # Add bbox to image
