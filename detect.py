@@ -57,6 +57,11 @@ def detect(save_img=False):
     colors = [[random.randint(0, 255) for _ in range(3)] for _ in range(len(names))]
 
     # Run inference
+    txt_path = str(Path(out) / Path("kaggle_pred")) + ('_%g' % dataset.frame if dataset.mode == 'video' else '')
+
+    with open(txt_path + '.txt', 'a') as f:
+        f.write(f"ID,TARGET\n")
+
     t0 = time.time()
     img = torch.zeros((1, 3, imgsz, imgsz), device=device)  # init img
     _ = model(img.half() if half else img) if device.type != 'cpu' else None  # run once
@@ -80,10 +85,6 @@ def detect(save_img=False):
             pred = apply_classifier(pred, modelc, img, im0s)
 
         # Process detections
-        txt_path = str(Path(out) / Path("kaggle_pred")) + ('_%g' % dataset.frame if dataset.mode == 'video' else '')
-
-        with open(txt_path + '.txt', 'a') as f:
-            f.write(f"ID,TARGET\n")
 
         # Don't save images!
         save_img = False
