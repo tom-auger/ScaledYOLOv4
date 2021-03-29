@@ -166,7 +166,7 @@ def train(hyp, opt, device, tb_writer=None):
     model.hyp = hyp  # attach hyperparameters to model
     model.gr = 1.0  # giou loss ratio (obj_loss = 1.0 or giou)
     model.class_weights = labels_to_class_weights(dataset.labels, nc).to(device)  # attach class weights
-    cw = model.class_weights
+    cw = model.class_weights if opt.useclassweights else None
     model.names = names
 
     # Class frequency
@@ -401,6 +401,7 @@ if __name__ == '__main__':
     parser.add_argument('--labels', type=str, default='labels_all', help='labels to use during training')
     parser.add_argument('--filterclass', type=int, default=-1, help='Class to filter out')
     parser.add_argument('--onlyclass', type=int, default=-1, help='The only class to train on')
+    parser.add_argument('--useclassweights', action='store_true', help='whether to use class weights')
     opt = parser.parse_args()
 
     # Resume
