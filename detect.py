@@ -80,6 +80,11 @@ def detect(save_img=False):
             pred = apply_classifier(pred, modelc, img, im0s)
 
         # Process detections
+        txt_path = str(Path(out) / Path("kaggle_pred")) + ('_%g' % dataset.frame if dataset.mode == 'video' else '')
+
+        with open(txt_path + '.txt', 'a') as f:
+            f.write(f"ID,TARGET\n")
+
         for i, det in enumerate(pred):  # detections per image
             if webcam:  # batch_size >= 1
                 p, s, im0 = path[i], '%g: ' % i, im0s[i].copy()
@@ -87,7 +92,7 @@ def detect(save_img=False):
                 p, s, im0 = path, '', im0s
 
             save_path = str(Path(out) / Path(p).name)
-            txt_path = str(Path(out) / Path(p).stem) + ('_%g' % dataset.frame if dataset.mode == 'video' else '')
+            
             s += '%gx%g ' % img.shape[2:]  # print string
             gn = torch.tensor(im0.shape)[[1, 0, 1, 0]]  # normalization gain whwh
             if det is not None and len(det):
@@ -100,15 +105,26 @@ def detect(save_img=False):
                     s += '%g %ss, ' % (n, names[int(c)])  # add to string
 
                 # Write results
-                for *xyxy, conf, cls in det:
-                    if save_txt:  # Write to file
-                        xywh = (xyxy2xywh(torch.tensor(xyxy).view(1, 4)) / gn).view(-1).tolist()  # normalized xywh
-                        with open(txt_path + '.txt', 'a') as f:
-                            f.write(('%g ' * 5 + '\n') % (cls, *xywh))  # label format
+                with open(txt_path + '.txt', 'a') as f:
+                    f.write(f"{Path(p).stem}, ")
 
-                    if save_img or view_img:  # Add bbox to image
-                        label = '%s' % (names[int(cls)])
-                        plot_one_box(xyxy, im0, label=label, color=colors[int(cls)], line_thickness=2)
+                    for *xyxy, conf, cls in det:
+                        if save_txt:  # Write to file
+                            # xywh = (xyxy2xywh(torch.tensor(xyxy).view(1, 4)) / gn).view(-1).tolist()  # normalized xywh
+                            coords = (torch.tensor(xyxy).view(1, 4) / gn).tolist()
+                            # with open(txt_path + '.txt', 'a') as f:
+                            #     f.write(('%g ' * 5 + '\n') % (cls, *xywh))  # label format
+
+                            f.write(('%g ' * 6) % (cls, conf, *coords))  # label format
+
+                        if save_img or view_img:  # Add bbox to image
+                            label = '%s' % (names[int(cls)])
+                            plot_one_box(xyxy, im0, label=label, color=colors[int(cls)], line_thickness=2)
+                    f.write('\n')
+            else:
+                # No predictions
+                with open(txt_path + '.txt', 'a') as f:
+                    f.write(f"{Path(p).stem}, 14 1 0 0 1 1\n")
 
             # Print time (inference + NMS)
             print('%sDone. (%.3fs)' % (s, t2 - t1))
