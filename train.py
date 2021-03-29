@@ -166,6 +166,7 @@ def train(hyp, opt, device, tb_writer=None):
     model.hyp = hyp  # attach hyperparameters to model
     model.gr = 1.0  # giou loss ratio (obj_loss = 1.0 or giou)
     model.class_weights = labels_to_class_weights(dataset.labels, nc).to(device)  # attach class weights
+    print(f"Class weights: {model.class_weights}")
     model.names = names
 
     # Class frequency
