@@ -85,6 +85,9 @@ def detect(save_img=False):
         with open(txt_path + '.txt', 'a') as f:
             f.write(f"ID,TARGET\n")
 
+        # Don't save images!
+        save_img = False
+
         for i, det in enumerate(pred):  # detections per image
             if webcam:  # batch_size >= 1
                 p, s, im0 = path[i], '%g: ' % i, im0s[i].copy()
