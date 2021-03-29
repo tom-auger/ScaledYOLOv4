@@ -166,7 +166,7 @@ def train(hyp, opt, device, tb_writer=None):
     model.hyp = hyp  # attach hyperparameters to model
     model.gr = 1.0  # giou loss ratio (obj_loss = 1.0 or giou)
     model.class_weights = labels_to_class_weights(dataset.labels, nc).to(device)  # attach class weights
-    print(f"Class weights: {model.class_weights}")
+    cw = model.class_weights
     model.names = names
 
     # Class frequency
@@ -258,7 +258,7 @@ def train(hyp, opt, device, tb_writer=None):
                 #pred = model(imgs.to(memory_format=torch.channels_last))
 
                 # Loss
-                loss, loss_items = compute_loss(pred, targets.to(device), model)  # scaled by batch_size
+                loss, loss_items = compute_loss(pred, targets.to(device), model, cw=cw)  # scaled by batch_size
                 if rank != -1:
                     loss *= opt.world_size  # gradient averaged between devices in DDP mode
                 # if not torch.isfinite(loss):
