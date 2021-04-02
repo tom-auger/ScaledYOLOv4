@@ -120,7 +120,7 @@ def detect(save_img=False):
                             #     f.write(('%g ' * 5 + '\n') % (cls, *xywh))  # label format
                             towrite = ('%g ' * 6) % (cls, conf, *coords)
                             f.write(towrite)  # label format
-                            print(towrite)
+                            # print(towrite)
 
                         if save_img or view_img:  # Add bbox to image
                             label = '%s' % (names[int(cls)])
